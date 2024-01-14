@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Script Executor</title>
+</head>
+<body>
+    <h1>Welcome to the Minecraft Script Executor</h1>
+    <p>Click the button below to execute the Minecraft script:</p>
+
+    <button onclick="executeMinecraftScript()">Execute Minecraft Script</button>
+
+    <script>
+        async function executeMinecraftScript() {
+            const serverUrl = 'http://192.168.0.26:8080/execute-command'; // Adjust the port if needed
+            const password = '992412';
+            const command = 'execute at Solulous run summon minecraft:tnt ~ ~ ~ {Fuse:20}';
+
+            try {
+                const response = await fetch(serverUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password, command }),
+                });
+
+                const result = await response.json();
+                console.log('Server response:', result);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
