@@ -3,7 +3,7 @@ const cors = require('cors');
 const { Rcon } = require('rcon-client');
 
 const app = express();
-const port = 8080;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
