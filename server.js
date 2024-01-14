@@ -4,7 +4,7 @@ const { Rcon } = require('rcon-client');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = 80;
 
 app.use(cors());
 app.use(express.json());
@@ -45,5 +45,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running on http://192.168.0.26:${port}`);
+    console.log(`Server running on https://e720-80-235-153-20.ngrok-free.app`);
 });
