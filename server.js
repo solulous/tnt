@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Rcon } = require('rcon-client');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -38,6 +39,11 @@ app.post('/execute-command', async (req, res) => {
     }
 });
 
+// Test route to serve a simple HTML form
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 app.listen(port, () => {
-    console.log(`Server running on http://192.168.0.26:${port}`);
+    console.log(`Server running on //192.168.0.26:${port}`);
 });
