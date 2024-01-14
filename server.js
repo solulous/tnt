@@ -39,5 +39,5 @@ app.post('/execute-command', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running on https://192.168.0.26:${port}`);
+    console.log(`Server running on http://192.168.0.26:${port}`);
 });
