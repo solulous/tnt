@@ -6,24 +6,126 @@
     <title>Minecraft Script Executor</title>
 </head>
 <body>
-    <h1>Welcome to the Minecraft Script Executor</h1>
-    <p>Click the button below to execute the Minecraft script:</p>
+    <div id="login-container">
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Enter username">
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="login()">Login</button>
+    </div>
 
-    <button onclick="executeMinecraftScript()">Execute Minecraft Script</button>
+    <!-- Inside the body of your HTML file -->
+    <div id="register-container">
+        <label for="new-username">New Username:</label>
+        <input type="text" id="new-username" placeholder="Enter new username">
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password" placeholder="Enter new password">
+        <button onclick="register()">Register</button>
+    </div>
+
+
+    <div id="script-container" style="display: none;">
+        <h1>Welcome to the Minecraft Script Executor</h1>
+        <p>Points: <span id="points">0</span></p>
+        <p>Click the button below to execute the Minecraft script:</p>
+        <button onclick="executeMinecraftScript()">Execute Minecraft Script</button>
+        <button onclick="logout()">Logout</button>
+    </div>
 
     <script>
-        async function executeMinecraftScript() {
-            const serverUrl = 'https://model-moderately-grubworm.ngrok-free.app/execute-command'; // Adjust the port if needed
-            const password = '992412';
-            const command = 'execute at Solulous run summon minecraft:tnt ~ ~ ~ {Fuse:20}';
+        let userPoints = 0; // Track user points globally
+
+        // Check if there are saved points in localStorage
+        const storedPoints = localStorage.getItem('userPoints');
+        if (storedPoints) {
+            userPoints = parseInt(storedPoints, 10);
+        }
+
+        async function register() {
+    const newUsername = document.getElementById('new-username').value;
+    const newPassword = document.getElementById('new-password').value;
+
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: newUsername, password: newPassword }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Registration successful. You can now log in.');
+        } else {
+            alert(`Registration failed. ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch(serverUrl, {
+                const response = await fetch('/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ password, command }),
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    userPoints = result.points; // Update global userPoints variable
+                    document.getElementById('login-container').style.display = 'none';
+                    document.getElementById('script-container').style.display = 'block';
+                    document.getElementById('points').textContent = userPoints;
+
+                    // Save points in localStorage
+                    localStorage.setItem('userPoints', userPoints.toString());
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function executeMinecraftScript() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Check if the user has enough points to execute the command
+            if (userPoints <= 0) {
+                alert('You are out of points. Earn more to execute the command.');
+                return;
+            }
+
+            const command = 'execute at Solulous run summon minecraft:tnt ~ ~ ~ {Fuse:20}';
+
+            try {
+                // Deduct 10 points
+                userPoints -= 10;
+
+                // Update points display
+                document.getElementById('points').textContent = userPoints;
+
+                // Save updated points in localStorage
+                localStorage.setItem('userPoints', userPoints.toString());
+
+                // Send request to execute the Minecraft script
+                const response = await fetch('/execute-command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, command }),
                 });
 
                 const result = await response.json();
@@ -31,6 +133,18 @@
             } catch (error) {
                 console.error('Error:', error);
             }
+        }
+
+        function logout() {
+            // Clear userPoints and localStorage
+            userPoints = 0;
+            localStorage.removeItem('userPoints');
+
+            // Reset UI
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('script-container').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
         }
     </script>
 </body>

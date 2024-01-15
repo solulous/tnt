@@ -1,0 +1,20 @@
+{
+  "users": {
+    "user1": {
+      "password": "password",
+      "points": 0
+    },
+    "registered-users": {
+      "password": "",
+      "points": -20
+    },
+    "": {
+      "password": "",
+      "points": 0
+    },
+    "user14": {
+      "password": "1234",
+      "points": 0
+    }
+  }
+}
